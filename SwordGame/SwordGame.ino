@@ -6,16 +6,16 @@
 */
 
 // Initial HP, which also corresponds to number leds
-#define INITIAL_HP 4;
+#define INITIAL_HP 3;
 
 // Pin that detects a sword hit from the conductive fabric
-const int conductiveFabricPin = 7;
+const int conductiveFabricPin = 5;
 
 // Pin to fire vibe board
 const int vibePin = 8;
 
 int ledPins[] = {
-  2, 3, 4, 5}; // an array of pin numbers to which LEDs are attached
+  9, 10, 11}; // an array of pin numbers to which LEDs are attached
 int pinCount = INITIAL_HP; // the number of pins (i.e. the length of the array)
 
 // Saves the current button state
@@ -30,11 +30,11 @@ boolean updateLife = false;
 unsigned long time;
 unsigned long oldTime = 0;
 unsigned long timeDelta = 0;
-unsigned long threshold = 2500;
+unsigned long threshold = 3000;
 
 void setup() {                
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   // initialize the conductive fabric pin as an input.
   pinMode(conductiveFabricPin, INPUT); 
   // set pin to high, we are using pull-up configuration
@@ -73,6 +73,15 @@ void loop() {
     if (timeDelta > threshold) {
       // decreate life counter
       --hp;
+
+      if (hp < 0) {
+	hp = INITIAL_HP
+      }
+       
+
+      Serial.println("HP");
+      Serial.println(hp);
+
       // now we want to updat hp display
       updateLife = true;
       oldTime = millis();
@@ -92,13 +101,15 @@ void loop() {
 
       // loop from the lowest pin to the highest:
       for (int thisPin = 0; thisPin < pinCount; thisPin++) {
-	if (thisPin > hp) {
+	if (thisPin >= hp) {
 	  // turn the pin on:
-	  digitalWrite(ledPins[thisPin], HIGH);  
+	  digitalWrite(ledPins[thisPin], LOW);    
 	}
 	else {
+
 	  // turn the pin off:
-	  digitalWrite(ledPins[thisPin], LOW);    
+	  digitalWrite(ledPins[thisPin], HIGH);  
+
 	}
 
       }
